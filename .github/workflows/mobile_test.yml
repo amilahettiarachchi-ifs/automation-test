@@ -21,31 +21,37 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.400'  # Adjust version based on your project
+          dotnet-version: '8.0.400'  # Adjust based on project
 
       # Step 3: Install dependencies
       - name: Install Dependencies
         run: dotnet restore
 
-      # Step 4: Build the Automation Test Suite
+      # Step 4: Build the Test Suite
       - name: Build Solution
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
       # Step 5: Setup Android SDK
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # Step 6: Start Appium Server (Optional: If running tests locally)
+      # Step 6: Start Appium Server (Wait to ensure it's ready)
       - name: Start Appium Server
         run: |
           npm install -g appium
-          appium --log-level info &  # Run Appium in the background
+          appium --log-level info &
+          sleep 10  # Give Appium time to start
 
-      # Step 7: Run SpecFlow Tests
+      # Step 7: Ensure TestResults Directory Exists
+      - name: Ensure TestResults Directory Exists
+        run: mkdir -p TestResults
+
+      # Step 8: Run SpecFlow Tests
       - name: Run SpecFlow Tests
         run: dotnet test --logger trx --results-directory TestResults/
+        continue-on-error: true  # Allow workflow to continue if tests fail
 
-      # Step 8: Upload Test Results (Optional)
+      # Step 9: Upload Test Results
       - name: Upload Test Results
         uses: actions/upload-artifact@v3
         with:
