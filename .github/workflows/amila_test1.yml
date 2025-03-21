@@ -21,11 +21,14 @@ jobs:
         with:
           dotnet-version: '8.0.400'  # Use the correct version for your project
 
+      - name: Debug File Structure
+        run: ls -R
+
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore C:\Users\amihlk\source\repos\automation\TgAzureAQA\Team.LHTests\Team.LHTests.sln
 
       - name: Build the Project
-        run: dotnet build --configuration Release
+        run: dotnet build C:\Users\amihlk\source\repos\automation\TgAzureAQA\Team.LHTests\Team.LHTests.sln --configuration Release
 
       - name: Start Appium Server
         run: |
@@ -33,4 +36,4 @@ jobs:
           appium --log appium.log &  # Start Appium in background
 
       - name: Run Tests
-        run: dotnet test --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test C:\Users\amihlk\source\repos\automation\TgAzureAQA\Team.LHTests\Team.LHTests.sln --logger "trx;LogFileName=test-results.trx"
