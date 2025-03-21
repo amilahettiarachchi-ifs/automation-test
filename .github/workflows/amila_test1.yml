@@ -1,0 +1,36 @@
+name: Android Test Automation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.400'  # Use the correct version for your project
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build the Project
+        run: dotnet build --configuration Release
+
+      - name: Start Appium Server
+        run: |
+          npm install -g appium
+          appium --log appium.log &  # Start Appium in background
+
+      - name: Run Tests
+        run: dotnet test --logger "trx;LogFileName=test-results.trx"
